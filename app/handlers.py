@@ -34,10 +34,9 @@ async def catalog(message: Message):
 # отлавливаем колбэк чтобы среагировать на нажатие кнопки в инлайн клаве
 @router.callback_query(F.data == 't-shirts')
 async def t_shirt(callback: CallbackQuery):
-    await callback.message.answer(
-        'Вы бырали категорию футболки')  # ответ будет показан, но кнопка клавы будет активна, что не нужно
-    await callback.answer()  # на колбэк всегда нужно отвечать колбэком а не сообщением. Это верный вариант, свечение пропадет
-    await callback.answer(show_alert=True)  # более навязчивый ответ с уведомлением
+    await callback.answer('')  # на колбэк всегда нужно отвечать колбэком а не сообщением. Это верный вариант, свечение пропадет. Можно указать текст
+    await callback.message.answer('Вы выбрали категорию футболки')  # ответ будет показан, но кнопка клавы будет активна, что не нужно
+    # await callback.answer(show_alert=True)  # более навязчивый ответ с уведомлением
 
 
 # не всегда может быть достаточно инф-ии о том как обрабатывать сообщения, отвечать на них и добавлять клавиатуру.
@@ -47,7 +46,7 @@ async def t_shirt(callback: CallbackQuery):
 async def register(message: Message, state: FSMContext):
     await state.set_state(Register.name)  # устанавливаем состояние для реагирования
     await message.answer(
-        # здесь нужно понять что введено именно имя. Когда юзер выполнит /register, он получит состояние
+        # здесь нужно понять что введено именно имя. Когда юзер выполнит /register, он получит состояние Register.name
         'Введите ваше имя'
     )
 
@@ -78,20 +77,3 @@ async def register_number(message: Message, state: FSMContext):
         f'Ваше имя: {data.get("name")}\nВаш возраст: {data.get("age")}\nВаш номер телефона: {data.get("number")}',
     )
     await state.clear()
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
