@@ -1,8 +1,11 @@
-from aiogram.types import ReplyKeyboardMarkup, KeyboardButton, InlineKeyboardMarkup, InlineKeyboardButton
+from aiogram.types import ReplyKeyboardMarkup, KeyboardButton, InlineKeyboardButton
+from aiogram.utils.keyboard import InlineKeyboardBuilder
+
+from app.database.requests import get_categories, get_category_item
 
 main_kb = ReplyKeyboardMarkup(
     keyboard=[
-        [KeyboardButton(text='Каталог')],  #  здесь м ыхотим чтобы появилась инлйн клавиатура при нажатии на Каталог
+        [KeyboardButton(text='Каталог')],
         [KeyboardButton(text='Корзина')],
         [KeyboardButton(text='Контакты'), KeyboardButton(text='О нас')],
     ],
@@ -11,20 +14,23 @@ main_kb = ReplyKeyboardMarkup(
 )
 
 
-# инлайн клава не может быть создана с текстом, т.к текст не отправляется в чат. Нужно как-то понять что мы отправили
-# сообщение. Для этого добавляем callback_data
-catalog = InlineKeyboardMarkup(
-    inline_keyboard=[
-        [InlineKeyboardButton(text='Футболки', callback_data='t-shirts')],
-        [InlineKeyboardButton(text='Кроссовки', callback_data='sneakers')],
-        [InlineKeyboardButton(text='Кепки', callback_data='caps')],
-    ]
-)
+async def categories():
+    all_categories = await get_categories()
+    keyboard = InlineKeyboardBuilder()
+
+    for category in all_categories:
+        keyboard.add(InlineKeyboardButton(text=category.name, callback_data=f'category_{category.id}'))
+    keyboard.add(InlineKeyboardButton(text='На главную', callback_data='to_main'))
+
+    return keyboard.adjust(2).as_markup()  # as_markup всегда исп-ем когда исп-ем Builder чтобы превратить его в клаву
 
 
-number = ReplyKeyboardMarkup(
-    keyboard=[
-        [KeyboardButton(text='Отправить контакт', request_contact=True)]
-    ],
-    resize_keyboard=True
-)
+async def items(category_id):
+    all_items = await get_category_item(category_id)
+    keyboard = InlineKeyboardBuilder()
+
+    for item in all_items:
+        keyboard.add(InlineKeyboardButton(text=item.name, callback_data=f'item_{item.id}'))
+    keyboard.add(InlineKeyboardButton(text='На главную', callback_data='to_main'))
+
+    return keyboard.adjust(2).as_markup()  # as_markup всегда исп-ем когда исп-ем Builder чтобы превратить его в клаву
