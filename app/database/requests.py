@@ -23,6 +23,12 @@ async def get_category_name(id: int):
         return category.name
 
 
-async def get_category_item(category_id):
+async def get_category_item(category_id: int):
     async with async_session() as db:
         return await db.scalars(select(Item).where(Item.category == category_id))
+
+
+async def get_item(item_id: int):
+    async with async_session() as db:
+        item = await db.scalar(select(Item).where(Item.id == item_id))
+        return item

@@ -4,7 +4,7 @@ from aiogram.types import Message, CallbackQuery
 
 import app.keyboards as kb
 from app.database import requests as rq
-from app.database.requests import get_category_name
+from app.database.requests import get_category_name, get_item
 
 router = Router()
 
@@ -29,5 +29,15 @@ async def category(callback: CallbackQuery):
     )
     await callback.message.answer(
         'Выберите товар по категории',
+        reply_markup=await kb.items(callback.data.split('_')[1])
+    )
+
+
+@router.callback_query(F.data.startswith('item_'))
+async def item(callback: CallbackQuery):
+    item = await get_item(int(callback.data.split("_")[-1]))
+    # await callback.answer(f'Вы выбрали товар {item.name}')
+    await callback.message.answer(
+        f'Название: {item.name}\nОписание: {item.description}\nЦена: {item.price} руб.',
         reply_markup=await kb.items(callback.data.split('_')[1])
     )
