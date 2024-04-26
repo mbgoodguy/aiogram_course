@@ -1,7 +1,7 @@
 from aiogram import Router, F
 from aiogram.enums import ParseMode
-from aiogram.filters import CommandStart
-from aiogram.types import Message, CallbackQuery, ReplyKeyboardMarkup, KeyboardButton
+from aiogram.filters import CommandStart, Command
+from aiogram.types import Message, CallbackQuery, ReplyKeyboardRemove
 from aiogram.utils import markdown
 
 import app.keyboards as kb
@@ -17,20 +17,49 @@ router = Router()
 #     await message.answer('Welcome to sneakers store!',
 #                          reply_markup=kb.main_kb)  # привязали клаву к сообщению 'Hello!'. Клава будет открыта
 
-
 @router.message(CommandStart())
 async def handle_start(message: Message):
-    # в функции обработчике должно быть минимум строк, поэтому лучше вынести все это в отдельную ф-ию, которая будет
-    # генерировать клавиатуру
+    # в функции обработчике должно быть минимум строк, поэтому лучше вынести кнопки в отдельную ф-ию (пусть будет
+    # get_on_startup_kb), которая будет генерировать клавиатуру
     url = 'https://www.cambridge.org/elt/blog/wp-content/uploads/2020/08/GettyImages-1221348467-e1597069527719.jpg'
-    button = KeyboardButton(text='Hello!')
-    buttons_row = [button]
-    markup = ReplyKeyboardMarkup(keyboard=[buttons_row])
 
     await message.answer(
         text=f'{markdown.hide_link(url=url)}Hello, {markdown.text(message.from_user.full_name)}!',
         parse_mode=ParseMode.HTML,
-        reply_markup=markup
+        reply_markup=kb.get_on_startup_kb()
+    )
+
+
+@router.message(F.text == 'Bye-bye')
+async def bye_handler(message: Message):
+    await message.reply(
+        text='Bye-bye! Click /start at any time!',
+        reply_markup=ReplyKeyboardRemove()  # скрываем клаву
+    )
+
+
+@router.message(F.text == kb.Buttontext.WHATS_NEXT)
+@router.message(Command('help', prefix='!/'))
+async def help_handler(message: Message):
+    text = markdown.text(
+        markdown.markdown_decoration.quote("I'm an echo bot"),
+        markdown.text(
+            "Send me",
+            markdown.markdown_decoration.bold(
+                markdown.text(
+                    markdown.underline("literally"),
+                    "any"
+                ),
+            ),
+            markdown.markdown_decoration.quote('message!')
+        ),
+        sep='\n'
+    )
+
+    await message.answer(
+        text=text,
+        parse_mode=ParseMode.MARKDOWN_V2,
+        reply_markup=kb.get_on_help_kb()
     )
 
 
