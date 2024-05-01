@@ -1,21 +1,7 @@
 from sqlalchemy import select
 
-from bot.database.models import User, Category, Item
 from bot.database.engine import async_session
-
-
-async def set_user(tg_id):
-    async with async_session() as db:
-        user = await db.scalar(select(User).where(User.tg_id == tg_id))
-
-        if not user:
-            db.add(User(tg_id=tg_id))  # не возвращает корутину, то есть не awaitable, поэтому без await
-            await db.commit()
-
-
-async def get_categories():
-    async with async_session() as db:
-        return await db.scalars(select(Category))
+from bot.database.models import Category, Item
 
 
 async def get_category_name(id: int):
@@ -33,3 +19,8 @@ async def get_item(item_id: int):
     async with async_session() as db:
         item = await db.scalar(select(Item).where(Item.id == item_id))
         return item
+
+
+async def get_categories():
+    async with async_session() as db:
+        return await db.scalars(select(Category))
