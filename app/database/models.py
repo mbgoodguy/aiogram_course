@@ -1,10 +1,5 @@
 from sqlalchemy import BigInteger, String, ForeignKey
-from sqlalchemy.ext.asyncio import async_sessionmaker, create_async_engine
 from sqlalchemy.orm import DeclarativeBase, Mapped, mapped_column
-
-engine = create_async_engine(url='sqlite+aiosqlite:///db.sqlite3')
-
-async_session = async_sessionmaker(engine)
 
 
 class Base(DeclarativeBase):
@@ -33,11 +28,6 @@ class Item(Base):
     description: Mapped[str] = mapped_column(String(length=120), nullable=True)
     price: Mapped[int] = mapped_column()
     category: Mapped[int] = mapped_column(ForeignKey(column='categories.id'))
-
-
-async def async_main():
-    async with engine.begin() as conn:
-        await conn.run_sync(Base.metadata.create_all)
 
 
 

@@ -1,5 +1,5 @@
 from aiogram.types import ReplyKeyboardMarkup, KeyboardButton, InlineKeyboardButton
-from aiogram.utils.keyboard import InlineKeyboardBuilder
+from aiogram.utils.keyboard import InlineKeyboardBuilder, ReplyKeyboardBuilder
 
 from app.database.requests import get_categories, get_category_item
 
@@ -11,7 +11,7 @@ class Buttontext:
     num_1 = "1⃣"
 
 
-def get_on_startup_kb():
+def get_on_startup_kb() -> ReplyKeyboardMarkup:
     button_hello = KeyboardButton(text=Buttontext.HELLO)
     button_help = KeyboardButton(text=Buttontext.WHATS_NEXT)
     button_bye = KeyboardButton(text=Buttontext.BYE)
@@ -33,7 +33,6 @@ def get_on_startup_kb():
 
 def get_on_help_kb():
     emoji_nums = [
-        "0⃣",
         "1⃣",
         "2⃣",
         "3⃣",
@@ -43,13 +42,21 @@ def get_on_help_kb():
         "7⃣",
         "8⃣",
         "9⃣",
+        "0⃣",
     ]
     buttons_row = [KeyboardButton(text=num) for num in emoji_nums]
-    buttons_row.append(buttons_row[0])  # добавляет в конец строки
-    buttons_row.append(buttons_row[1])  # добавляет в конец строки
-    buttons_row.append(buttons_row[2])  # не увидим, т.к лимит эл-ов в строке 12
-    buttons_row.pop(0)  # удалили 0
-    buttons_row.append(buttons_row[2])  # увидим, т.к удалили последний эл-т и добавили новый
+    # buttons_row.append(buttons_row[0])  # добавляет в конец строки
+    # buttons_row.append(buttons_row[1])  # добавляет в конец строки
+    # buttons_row.append(buttons_row[2])  # не увидим, т.к лимит эл-ов в строке 12
+    # buttons_row.pop(0)  # удалили 0
+    # buttons_row.append(buttons_row[2])  # увидим, т.к удалили последний эл-т и добавили новый
+
+    # markup = ReplyKeyboardMarkup(
+    #     keyboard=[buttons_row, buttons_row],
+    #     resize_keyboard=True
+    # )
+    #
+    # return markup
 
     '''
     Лучше придерживаться 3-5 элементов в строке и делать больше строк, если нужно, а не элементов в строке. Потому что
@@ -57,12 +64,30 @@ def get_on_help_kb():
     пригодится KeyboardBuilder
     '''
 
-    markup = ReplyKeyboardMarkup(
-        keyboard=[buttons_row, buttons_row],
-        resize_keyboard=True
-    )
+    builder = ReplyKeyboardBuilder()
 
-    return markup
+    for num in emoji_nums:
+        # builder.button(text=num)  # button просто генерирует кнопку автоматически. Но мы можем и создать кнопку и
+        # через метод add куда передать KeyboardButton
+        builder.add(KeyboardButton(text=num))  # сюда можем передать несколько кнопок, каждая будет добавлена в строку,
+        # если лимит строки не достигнут
+
+    # builder.adjust(3).as_markup(resize_keyboard=True)  # установка 3 кнопок в ряд
+    builder.adjust(3, 3, 4).as_markup(resize_keyboard=True)  # в первом 3, во втором 3, в последнем 4
+
+    # добавление
+    builder.add(KeyboardButton(text='Q'))  # add добавляет в конец строки. Переносит кнопки на новый ряд если достигнут лимит ширины (10)
+    builder.row(buttons_row[-1], buttons_row[-2])  # добавляем новую строку в билдер. Всегда добавление на новую строку
+
+    builder.row(buttons_row[-3])  # 8
+
+    builder.row(buttons_row[1])
+    builder.add(buttons_row[2])
+    builder.add(buttons_row[3])
+
+    builder.row(KeyboardButton(text='Кнопка добавленная через row'))
+
+    return builder.as_markup()  # если не укажем as_markup, то будет ошибка reply_markup.ForceReply
 
 
 main_kb = ReplyKeyboardMarkup(
