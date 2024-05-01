@@ -1,7 +1,7 @@
 from aiogram.types import ReplyKeyboardMarkup, KeyboardButton, InlineKeyboardButton
 from aiogram.utils.keyboard import InlineKeyboardBuilder, ReplyKeyboardBuilder
 
-from app.database.requests import get_categories, get_category_item
+from bot.database.requests import get_categories, get_category_item
 
 
 class Buttontext:

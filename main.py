@@ -4,8 +4,8 @@ import os
 from aiogram import Dispatcher, Bot
 from dotenv import load_dotenv
 
-from app.database.engine import async_main
-from app.handlers import router
+from bot.database.engine import async_main
+from bot.handlers import router
 
 load_dotenv()
 

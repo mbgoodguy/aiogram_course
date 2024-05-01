@@ -1,7 +1,7 @@
 from sqlalchemy import select
 
-from app.database.models import User, Category, Item
-from app.database.engine import async_session
+from bot.database.models import User, Category, Item
+from bot.database.engine import async_session
 
 
 async def set_user(tg_id):

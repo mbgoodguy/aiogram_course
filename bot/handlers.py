@@ -4,8 +4,8 @@ from aiogram.filters import CommandStart, Command
 from aiogram.types import Message, CallbackQuery, ReplyKeyboardRemove
 from aiogram.utils import markdown
 
-import app.keyboards as kb
-from app.database.requests import get_category_name, get_item
+import bot.keyboards as kb
+from bot.database.requests import get_category_name, get_item
 
 router = Router()
 
