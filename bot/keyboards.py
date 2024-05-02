@@ -9,96 +9,27 @@ class Buttontext:
     WHATS_NEXT = "What's next?"
     BYE = "Bye-bye"
     num_1 = "1⃣"
-    HELP = "Help"
+    COMMANDS = "Команды"
+    CONTACTS = "Контакты"
 
 
 def get_on_startup_kb() -> ReplyKeyboardMarkup:
-    # button_hello = KeyboardButton(text=Buttontext.HELLO)
-    button_help = KeyboardButton(text=Buttontext.WHATS_NEXT)
-    button_bye = KeyboardButton(text=Buttontext.BYE)
+    button_commands = KeyboardButton(text=Buttontext.COMMANDS)
+    button_contacts = KeyboardButton(text=Buttontext.CONTACTS)
 
     # кнопки в ряд
-    # buttons_row = [button_help, button_hello]
-    # markup = ReplyKeyboardMarkup(keyboard=[buttons_row])
+    buttons_row = [button_commands, button_contacts]
+    markup = ReplyKeyboardMarkup(
+        keyboard=[buttons_row],
+        resize_keyboard=True,
+    )
 
     # кнопки друг под другом
-    button_row_1 = [button_help, button_bye]
-    markup = ReplyKeyboardMarkup(
-        keyboard=[button_row_1],
-        # one_time_keyboard=True
-    )
-
-    return markup
-
-
-# def get_on_help_kb():
-#     emoji_nums = [
-#         "1⃣",
-#         "2⃣",
-#         "3⃣",
-#         "4⃣",
-#         "5⃣",
-#         "6⃣",
-#         "7⃣",
-#         "8⃣",
-#         "9⃣",
-#         "0⃣",
-#     ]
-#     buttons_row = [KeyboardButton(text=num) for num in emoji_nums]
-#     # buttons_row.append(buttons_row[0])  # добавляет в конец строки
-#     # buttons_row.append(buttons_row[1])  # добавляет в конец строки
-#     # buttons_row.append(buttons_row[2])  # не увидим, т.к лимит эл-ов в строке 12
-#     # buttons_row.pop(0)  # удалили 0
-#     # buttons_row.append(buttons_row[2])  # увидим, т.к удалили последний эл-т и добавили новый
-#
-#     # markup = ReplyKeyboardMarkup(
-#     #     keyboard=[buttons_row, buttons_row],
-#     #     resize_keyboard=True
-#     # )
-#     #
-#     # return markup
-#
-#     '''
-#     Лучше придерживаться 3-5 элементов в строке и делать больше строк, если нужно, а не элементов в строке. Потому что
-#     мы можем строки проскроллить вертикально, а горизонтальной прокрутки нет. И вот когда мы такие клавы используем,
-#     пригодится KeyboardBuilder
-#     '''
-#
-#     builder = ReplyKeyboardBuilder()
-#
-#     for num in emoji_nums:
-#         # builder.button(text=num)  # button просто генерирует кнопку автоматически. Но мы можем и создать кнопку и
-#         # через метод add куда передать KeyboardButton
-#         builder.add(KeyboardButton(text=num))  # сюда можем передать несколько кнопок, каждая будет добавлена в строку,
-#         # если лимит строки не достигнут
-#
-#     # builder.adjust(3).as_markup(resize_keyboard=True)  # установка 3 кнопок в ряд
-#     builder.adjust(3, 3, 4).as_markup(resize_keyboard=True)  # в первом 3, во втором 3, в последнем 4
-#
-#     # добавление
-#     builder.add(KeyboardButton(text='Q'))  # add добавляет в конец строки. Переносит кнопки на новый ряд если достигнут лимит ширины (10)
-#     builder.row(buttons_row[-1], buttons_row[-2])  # добавляем новую строку в билдер. Всегда добавление на новую строку
-#
-#     builder.row(buttons_row[-3])  # 8
-#
-#     builder.row(buttons_row[1])
-#     builder.add(buttons_row[2])
-#     builder.add(buttons_row[3])
-#
-#     builder.row(KeyboardButton(text='Кнопка добавленная через row'))
-#
-#     return builder.as_markup()  # если не укажем as_markup, то будет ошибка reply_markup.ForceReply
-
-
-def get_contacts_kb():
-    markup = ReplyKeyboardMarkup(
-        keyboard=[
-            [
-                KeyboardButton(text='Контакты'),
-            ]
-        ]
-    )
-
+    # button_row_1 = []
+    # markup = ReplyKeyboardMarkup(
+    #     keyboard=[button_row_1],
+    #     # one_time_keyboard=True
+    # )
     return markup
 
 
@@ -155,4 +86,4 @@ async def items(category_id):
         keyboard.add(InlineKeyboardButton(text=item.name, callback_data=f'item_{item.id}'))
     keyboard.add(InlineKeyboardButton(text='На главную', callback_data='to_main'))
 
-    return keyboard.adjust(2).as_markup()  # as_markup всегда исп-ем когда исп-ем Builder чтобы превратить его в клаву
+    return keyboard.adjust(2).as_markup()
